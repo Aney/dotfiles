@@ -1,7 +1,12 @@
 " Vim settings
-set tabstop =4
-syntax on
-set number
+set tabstop =4	" The amount of spaces per tab
+syntax on 		" Syntax highlighting
+set number		" Line numbers
+set cursorline	" Shows a line on the cursor's line
 
-" Fancy colorColumn
+" Search settings
+set incsearch	" Search as characters are entered
+set hlsearch	" Highlight all matches
+
+" Changes colorcolumn per line that hits 81 characters
 call matchadd('ColorColumn', '\%81v', 100)
