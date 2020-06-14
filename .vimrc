@@ -11,3 +11,8 @@ set hlsearch		" Highlight all matches
 
 " Changes colorcolumn per line that hits 81 characters
 call matchadd('ColorColumn', '\%81v', 100)
+
+" Fuzzy finder
+set path+=**		" Search down subdirectories
+set wildmenu		" Display all the matching files when tab completing
+
