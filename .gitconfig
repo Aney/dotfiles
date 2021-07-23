@@ -1,0 +1,46 @@
+[core]
+	autocrlf = input
+	editor = vim
+[user]
+	name = Nathan Steel
+	email = aney.login+rpi3@gmail.com
+[color]
+	ui = true
+[alias]
+	# Logs
+	lol = log --pretty=oneline --abbrev-commit --graph --decorate --date-order
+	lola = !git lol --branches --remotes --tags
+	lolal = !git lol --branches --tags
+	# log format for Project Managers:
+	lof = !git log --pretty=format:'%cd %s [%h by %an%d]' --abbrev-commit --graph --decorate --date-order --branches --remotes --tags --date=short
+	recent = , sorted by commit dates!git --no-pager lol -n 15
+	recenta = !git recent --branches --remotes --tags
+
+	# Useful aliases
+	st = status -s
+	cp = cherry-pick
+	df = diff
+	cf = diff --cached
+	ap = add --patch
+	# List all branches
+	br = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
+	del = branch -D
+	show-names = show --name-status
+	diff-names = diff --name-only
+	# Push changes of current branch
+	done = !git push origin HEAD
+	# Vimdiff
+	vd = difftool -t vimdiff -y
+
+	# Git Flow
+	fff = flow feature finish
+	ffs = flow feature start
+	frf = flow release finish
+	frs = flow release start
+[push]
+[branch]
+[push]
+[push]
+	default = simple
+[fetch]
+	prune = true
