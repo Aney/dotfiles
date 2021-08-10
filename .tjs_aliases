@@ -1,0 +1,279 @@
+alias start='cmd.exe /c start'
+alias explorer='start'
+alias rm='rm -i'
+alias zoidberg-sync-lock-check='ssh root@zoidberg.tjs.co.uk -p 2020 "ls -altr /home/*/website/private/tmp/*lock*"'
+alias zoidberg-phantomjs-check='ssh root@zoidberg.tjs.co.uk -p 2020 "ps -ef | grep phantomjs"'
+alias updatedns='ssh root@midget.tjs.co.uk "/root/scripts/updatedns.php"'
+alias scratch='cd /mnt/c/scratch'
+alias vagrant='vagrant.exe'
+
+# devboxes
+VAG80='27018d0'
+VAG74='97c9f86'
+VAG56='09ec6c2'
+
+alias vagup80='vagrant.exe up $VAG80'
+alias vagup74='vagrant.exe up $VAG74'
+alias vagup56='vagrant.exe up $VAG56'
+alias vaghalt80='vagrant.exe halt $VAG80'
+alias vaghalt74='vagrant.exe halt $VAG74'
+alias vaghalt56='vagrant.exe halt $VAG56'
+alias vagreload80='vagrant.exe reload $VAG80'
+alias vagreload74='vagrant.exe reload $VAG74'
+alias vagreload56='vagrant.exe reload $VAG56'
+alias vaghaltall='vagrant.exe halt $VAG80 && vagrant.exe halt $VAG74 && vagrant.exe halt $VAG56'
+
+alias ssh80='ssh vagrant@nathan80.tjs.co.uk'
+alias ssh74='ssh vagrant@nathan74.tjs.co.uk'
+alias ssh56='ssh vagrant@nathan56.tjs.co.uk'
+
+#alias weasel-pageant='eval $(/mnt/c/Users/nathan/command/weasel-pageant-1.1/weasel-pageant -r)'
+
+function git-push-release()
+{
+
+	if git show-ref --verify --quiet refs/heads/main; then
+		echo "Push main:"
+		git push origin main
+	elif git show-ref --verify --quiet refs/heads/master; then
+		echo "Push master:"
+		git push origin master
+	fi
+
+	echo ""
+	echo "Push tags:"
+	git push origin --tags
+
+	echo ""
+	echo "Push develop:"
+	git push origin develop
+}
+
+
+## server siteexport
+function siteexport()
+{
+    usage="Usage: siteexport <servername> [nginx|both]"
+    if [[ $# -eq 0 ]]; then
+        echo "No server specified"
+        echo "$usage"
+        return 1
+    elif [[ $# -eq 1 ]]; then
+        echo "No scope specified"
+        echo "$usage"
+        return 2
+    else
+        if [[ $2 = 'nginx' ]]; then
+            args=' --nginx-only'
+        elif [[ $2 = 'both' ]]; then
+            args=""
+        else
+            echo "Scope must be 'nginx' or 'both'"
+            echo "$usage"
+            return 3
+        fi
+        #weasel-pageant && ssh root@midget.tjs.co.uk "/root/scripts/$1-siteexport.php $args"
+        ssh root@midget.tjs.co.uk "/root/scripts/$1-siteexport.php $args"
+    fi
+}
+
+## change to a website project's directory
+function site()
+{
+    basedir="/mnt/c/Users/nathan/documents/websites/"
+    if [[ $# -eq 0 ]]; then
+        echo "No site specified"
+        echo "Usage: site <sitename>"
+        echo "cd $basedir"
+        cd $basedir
+        return 0;
+    elif [[ -d "$basedir$1" ]]; then
+        dir="$basedir$1";
+    else
+        for f in $basedir$1*; do
+            if [[ -e $f && -d $f ]]; then
+                dirsfound=()
+                COUNTER=0
+                for g in $basedir$1*; do
+                    if [[ -d $g ]]; then
+                        tempdir=$g
+                        dirsfound+=(${g/$basedir/})
+                        let COUNTER=COUNTER+1
+                    fi
+                done
+                if [ "$COUNTER" -eq "1" ]; then
+                    dir=$tempdir
+                else
+                    echo "$COUNTER found, need to be more specific"
+                    for h in ${dirsfound[@]}; do
+                        echo " - $h"
+                    done
+					echo "cd $basedir"
+			        cd $basedir
+                    dir=""
+                fi
+            else
+                echo "Can't find site '$1'";
+                return 0;
+            fi
+            break
+        done
+    fi
+
+    if [[ $# -ge 2 ]]; then
+        if [[ -d "$dir/$2" ]]; then
+            dir="$dir/$2";
+        else
+            echo "Can't find subfolder '$2'";
+            return 0;
+        fi
+    fi
+
+    if [ $dir ]; then
+        cd $dir
+        #explorer .
+        echo "Changed to $dir"
+        if [[ -d ".git" ]]; then
+        	echo "-----------------------------------";
+        	#echo "ensuring SSH agent is running...";
+        	#weasel-pageant;
+        	#echo "...done";
+        	#echo "-------------";
+		if [ -f ".nvmrc" ]; then
+		    	echo "setting node version...";
+		    	nvm use;
+		    	echo "...done";
+		fi
+        	echo "-------------";
+	    	echo "git-fetching origin (incl. tags)...";
+	    	git fetch origin --tags;
+	    	echo "...done";
+	    	echo "-------------";
+	    	echo "Git branches:";
+	    	git br;
+	    	echo "-------------";
+	    	echo "Recent commits:";
+	    	git recent -n 3
+	    	echo "-----------";
+	    	echo "Git status:";
+	    	if [[ `git status --porcelain` ]]; then
+			# Changes
+		    	git st;
+		else
+			# No changes
+			echo "Repo is clean."
+		fi
+	    	echo "-----------------------------------";
+	    fi;
+    fi
+}
+## change to a component project's directory
+function comp()
+{
+    basedir="/mnt/c/Users/nathan/documents/components/"
+    if [[ $# -eq 0 ]]; then
+        echo "No component specified"
+        echo "Usage: comp <componentname>"
+        echo "cd $basedir"
+        cd $basedir
+        return 0;
+    elif [[ -d "$basedir$1" ]]; then
+        dir="$basedir$1";
+    else
+        for f in $basedir$1*; do
+            if [[ -e $f && -d $f ]]; then
+                dirsfound=()
+                COUNTER=0
+                for g in $basedir$1*; do
+                    if [[ -d $g ]]; then
+                        tempdir=$g
+                        dirsfound+=(${g/$basedir/})
+                        let COUNTER=COUNTER+1
+                    fi
+                done
+                if [ "$COUNTER" -eq "1" ]; then
+                    dir=$tempdir
+                else
+                    echo "$COUNTER found, need to be more specific"
+                    for h in ${dirsfound[@]}; do
+                        echo " - $h"
+                    done
+					echo "cd $basedir"
+			        cd $basedir
+                    dir=""
+                fi
+            else
+                echo "Can't find component '$1'";
+                return 0;
+            fi
+            break
+        done
+    fi
+
+    if [[ $# -ge 2 ]]; then
+        if [[ -d "$dir/$2" ]]; then
+            dir="$dir/$2";
+        else
+            echo "Can't find subfolder '$2'";
+            return 0;
+        fi
+    fi
+
+    if [ $dir ]; then
+        cd $dir
+        #explorer .
+        echo "Changed to $dir"
+        if [[ -d ".git" ]]; then
+        	echo "-----------------------------------";
+        	#echo "ensuring SSH agent is running...";
+        	#weasel-pageant;
+        	#echo "...done";
+        	#echo "-------------";
+	    	echo "git-fetching origin (incl. tags)...";
+	    	git fetch origin --tags;
+	    	echo "...done";
+	    	echo "-------------";
+	    	echo "Git branches:";
+	    	git br;
+	    	echo "-------------";
+	    	echo "Recent commits:";
+	    	git recent -n 3
+	    	echo "-----------";
+	    	echo "Git status:";
+	    	if [[ `git status --porcelain` ]]; then
+			# Changes
+		    	git st;
+		else
+			# No changes
+			echo "Repo is clean."
+		fi
+	    	echo "-----------------------------------";
+	    fi;
+    fi
+}
+
+## GIST: https://gist.github.com/949740
+## Only ask for my SSH key passpharase once!
+# Sourced from http://mah.everybody.org/docs/ssh
+SSH_ENV="${HOME}/.ssh/environment"
+
+# Function to start the SSH-Agent
+function start_agent {
+  echo "Initialising new SSH agent..."
+  /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+  echo succeeded
+  chmod 600 "${SSH_ENV}"
+  . "${SSH_ENV}" > /dev/null
+  /usr/bin/ssh-add;
+}
+
+# Source SSH settings, if applicable
+if [ -f "${SSH_ENV}" ]; then
+  . "${SSH_ENV}" > /dev/null
+  #ps ${SSH_AGENT_PID} doesn't work under cywgin
+  ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+    start_agent;
+  }
+else
+  start_agent;
+fi
