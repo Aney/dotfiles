@@ -15,9 +15,18 @@ call plug#begin("~/.vim/plugged")
 	Plug 'junegunn/fzf.vim'
 	" COC
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
-	let g:coc_global_extensions = ['coc-css', 'coc-html', 'coc-json', 'coc-prettier', 'coc-tsserver']
+	let g:coc_global_extensions = ['coc-css', 'coc-html', 'coc-json', 'coc-prettier', 'coc-tsserver', 'coc-phpls']
+	" If node is installed via nvm, you need to reference a version here
+	let g:coc_node_path = '/home/nathan/.nvm/versions/node/v14.17.4/bin/node'
 	" Vim Move
 	Plug 'matze/vim-move'
+	" Add surround to vim (much like, around, inside, etc)
+	Plug 'tpope/vim-surround'
+	" Add easy commenting
+	Plug 'preservim/nerdcommenter'
+	" Symfony/PHP
+	Plug 'lepture/vim-jinja'
+	Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'}
 call plug#end()
 
 " Add Vim Config
