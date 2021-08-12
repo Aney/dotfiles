@@ -27,6 +27,7 @@ call plug#begin("~/.vim/plugged")
 	" Symfony/PHP
 	Plug 'lepture/vim-jinja'
 	Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'}
+	Plug 'nelsyeung/twig.vim'
 call plug#end()
 
 " Add Vim Config
