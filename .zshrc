@@ -4,6 +4,8 @@ export ZSH="/home/nathan/.oh-my-zsh"
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="robbyrussell"
 
+source ~/.bashrc
+source ~/.bash_aliases
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 

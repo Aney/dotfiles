@@ -21,3 +21,6 @@ call matchadd('ColorColumn', '\%81v', 100)
 set path+=**		" Search down subdirectories
 set wildmenu		" Display all the matching files when tab completing
 
+" File Management
+set hidden			" Allow switching between buffers without saving
+
